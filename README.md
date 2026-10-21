@@ -18,7 +18,7 @@ Nesta etapa, o foco do projeto está na modelagem do sistema, na identificação
 
 O diagrama abaixo representa a modelagem atual do sistema e poderá ser atualizado conforme o desenvolvimento do projeto.
 
-![Diagrama de Classes do Sistema](docs/diagrama-classes.png)
+![Diagrama de Classes do Sistema](img/Datagrama_Classes.drawio%20(1).png)
 
 ## Tecnologias e ferramentas
 

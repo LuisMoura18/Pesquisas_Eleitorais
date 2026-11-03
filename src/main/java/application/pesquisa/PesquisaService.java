@@ -11,29 +11,24 @@ import domain.model.pesquisa.PlanoAmostral;
 import domain.model.pesquisa.TipoPergunta;
 import domain.model.pesquisa.TipoPesquisa;
 import domain.repository.PesquisaRepository;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 public class PesquisaService {
-
     private final PesquisaRepository repositorio;
 
     public PesquisaService(PesquisaRepository repositorio) {
         this.repositorio = repositorio;
     }
-
-    // ---------- CRUD de pesquisas ----------
-
+    //CRUD PESQUISA
     public Pesquisa cadastrar(String codigo, String nome, String cargo, LocalDate inicio,
                               LocalDate fim, Abrangencia abrangencia, TipoPesquisa tipo,
                               int quantidadePrevista) {
         if (repositorio.buscarPorCodigo(codigo).isPresent())
             throw new PesquisaInvalidaException("Já existe pesquisa com o código " + codigo);
 
-        Pesquisa pesquisa = new Pesquisa(codigo, nome, cargo, inicio, fim,
-                abrangencia, tipo, quantidadePrevista);
+        Pesquisa pesquisa = new Pesquisa(codigo, nome, cargo, inicio, fim, abrangencia, tipo, quantidadePrevista);
         repositorio.salvar(pesquisa);
         return pesquisa;
     }
@@ -50,8 +45,7 @@ public class PesquisaService {
     public void excluir(String codigo) {
         Pesquisa p = buscar(codigo);
         if (!p.podeSerExcluida())
-            throw new PesquisaInvalidaException(
-                    "Não é possível excluir uma pesquisa processada ou que já possui entrevistas.");
+            throw new PesquisaInvalidaException("Não é possível excluir uma pesquisa processada ou que já possui entrevistas.");
         repositorio.excluir(codigo);
     }
 
@@ -68,8 +62,7 @@ public class PesquisaService {
         return repositorio.listar().stream().filter(filtro::aceita).toList();
     }
 
-    // ---------- Perguntas e opções ----------
-
+    //Perguntas e opcoes
     public void adicionarPergunta(String codigo, Pergunta pergunta) {
         Pesquisa p = buscar(codigo);
         p.adicionarPergunta(pergunta);
@@ -101,21 +94,18 @@ public class PesquisaService {
         repositorio.salvar(p);
     }
 
-    // ---------- Plano amostral ----------
-
+    //Plano amostral
     public void definirPlanoAmostral(String codigo, PlanoAmostral plano) {
         Pesquisa p = buscar(codigo);
         p.definirPlanoAmostral(plano);
         repositorio.salvar(p);
     }
 
-    public List<GrupoAmostral> gruposQueNaoAtingiramMeta(String codigo,
-                                                         Map<Long, Integer> entrevistasValidasPorGrupo) {
+    public List<GrupoAmostral> gruposQueNaoAtingiramMeta(String codigo, Map<Long, Integer> entrevistasValidasPorGrupo) {
         return buscar(codigo).gruposQueNaoAtingiramMeta(entrevistasValidasPorGrupo);
     }
 
-    // ---------- Situação e andamento ----------
-
+    //Situacao e andamento
     public void iniciarColeta(String codigo) {
         Pesquisa p = buscar(codigo);
         p.iniciarColeta();
@@ -134,7 +124,6 @@ public class PesquisaService {
         repositorio.salvar(p);
     }
 
-    // O módulo de Coleta (Aluno 3) vai chamar este método a cada entrevista concluída
     public void registrarEntrevista(String codigo) {
         Pesquisa p = buscar(codigo);
         p.registrarEntrevista();

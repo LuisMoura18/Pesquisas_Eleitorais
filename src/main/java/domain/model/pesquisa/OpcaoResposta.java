@@ -1,7 +1,6 @@
 package domain.model.pesquisa;
 
 import domain.exceptions.PesquisaInvalidaException;
-
 import java.io.Serializable;
 
 public class OpcaoResposta implements Serializable {

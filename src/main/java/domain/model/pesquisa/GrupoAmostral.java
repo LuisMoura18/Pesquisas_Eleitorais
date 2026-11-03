@@ -1,7 +1,6 @@
 package domain.model.pesquisa;
 
 import domain.exceptions.PesquisaInvalidaException;
-
 import java.io.Serializable;
 
 public class GrupoAmostral implements Serializable {
@@ -21,7 +20,6 @@ public class GrupoAmostral implements Serializable {
         this.quantidadeMinima = quantidadeMinima;
     }
 
-    // Regra do PDF: não atinge a meta se as entrevistas válidas forem inferiores ao mínimo
     public boolean atingiuMeta(int entrevistasValidas) {
         return entrevistasValidas >= quantidadeMinima;
     }

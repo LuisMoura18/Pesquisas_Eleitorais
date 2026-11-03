@@ -4,7 +4,6 @@ import domain.model.pesquisa.Abrangencia;
 import domain.model.pesquisa.Pesquisa;
 import domain.model.pesquisa.SituacaoPesquisa;
 import domain.model.pesquisa.TipoPesquisa;
-
 import java.time.LocalDate;
 
 public class FiltroPesquisa {
@@ -17,7 +16,9 @@ public class FiltroPesquisa {
     private Integer quantidadeMinimaPrevista;
 
     public FiltroPesquisa comPeriodo(LocalDate inicio, LocalDate fim) {
-        this.periodoInicio = inicio; this.periodoFim = fim; return this;
+        this.periodoInicio = inicio;
+        this.periodoFim = fim;
+        return this;
     }
     public FiltroPesquisa comCargo(String cargo) { this.cargo = cargo; return this; }
     public FiltroPesquisa comTipo(TipoPesquisa tipo) { this.tipo = tipo; return this; }

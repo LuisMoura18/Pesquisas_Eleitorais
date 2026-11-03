@@ -3,7 +3,6 @@ package infrastructure.persistence;
 import domain.exceptions.PersistenciaException;
 import domain.model.pesquisa.Pesquisa;
 import domain.repository.PesquisaRepository;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

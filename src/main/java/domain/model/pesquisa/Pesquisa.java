@@ -43,8 +43,7 @@ public class Pesquisa implements Serializable {
         this.quantidadePrevista = quantidadePrevista;
     }
 
-    // ---------- Dados básicos ----------
-
+    //Dados
     public void editar(String nome, String cargo, LocalDate inicio, LocalDate fim,
                        Abrangencia abrangencia, TipoPesquisa tipo, int quantidadePrevista) {
         exigirAlteravel();
@@ -73,8 +72,7 @@ public class Pesquisa implements Serializable {
         return situacao != SituacaoPesquisa.PROCESSADA && quantidadeRealizada == 0;
     }
 
-    // ---------- Perguntas ----------
-
+    //Perguntas
     public void adicionarPergunta(Pergunta pergunta) {
         exigirPlanejada("adicionar perguntas");
         for (Pergunta p : perguntas) {
@@ -111,8 +109,7 @@ public class Pesquisa implements Serializable {
                 .orElseThrow(() -> new PesquisaInvalidaException("Pergunta " + ordem + " não encontrada."));
     }
 
-    // ---------- Plano amostral ----------
-
+    //Plano amostral
     public void definirPlanoAmostral(PlanoAmostral plano) {
         exigirPlanejada("definir o plano amostral");
         if (plano.getGrupos().isEmpty())
@@ -123,7 +120,6 @@ public class Pesquisa implements Serializable {
         this.planoAmostral = plano;
     }
 
-    // Recebe as entrevistas válidas por grupo (quem fornece é o módulo de Coleta)
     public List<GrupoAmostral> gruposQueNaoAtingiramMeta(Map<Long, Integer> entrevistasValidasPorGrupo) {
         List<GrupoAmostral> resultado = new ArrayList<>();
         if (planoAmostral == null) return resultado;
@@ -174,8 +170,7 @@ public class Pesquisa implements Serializable {
         return 100.0 * quantidadeRealizada / quantidadePrevista;
     }
 
-    // ---------- Validações internas ----------
-
+    //validacoes
     private void validarDados(Abrangencia abrangencia, TipoPesquisa tipo,
                               LocalDate inicio, LocalDate fim, int quantidadePrevista) {
         if (inicio == null || fim == null || fim.isBefore(inicio))
@@ -203,7 +198,7 @@ public class Pesquisa implements Serializable {
             throw new PesquisaInvalidaException(mensagem);
     }
 
-    // ---------- Getters ----------
+    //getters
     public String getCodigo() { return codigo; }
     public String getNome() { return nome; }
     public String getCargo() { return cargo; }

@@ -2,7 +2,7 @@ package domain.model.pesquisa;
 
 public enum SituacaoPesquisa {
     PLANEJADA,
-    COLETANDO,
+    EM_COLETA,
     ENCERRADA,
     PROCESSADA
 }

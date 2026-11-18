@@ -13,6 +13,7 @@ import domain.model.analise.ResultadoEstatistico;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
 
 public class RelatorioController {
 
@@ -60,9 +61,21 @@ public class RelatorioController {
 
     public Relatorio gerarRelatorio(int id, String titulo) {
         relatorio = new Relatorio(id, titulo);
+
         List<ResultadoEstatistico> resultados =
                 analise.obterResultados();
-        relatorio.gerarRelatorio(resultados);
+
+        List<ResultadoEstatistico> filtrados = new ArrayList<>();
+
+        for (ResultadoEstatistico resultado : resultados) {
+            if (filtro.getCandidato() == null ||
+                    filtro.getCandidato().equalsIgnoreCase(
+                            resultado.getCategoria())) {
+                filtrados.add(resultado);
+            }
+        }
+
+        relatorio.gerarRelatorio(filtrados);
         return relatorio;
     }
 

@@ -4,7 +4,8 @@ package application.analise;
 import domain.model.analise.AnaliseEstatistica;
 import domain.model.analise.ResultadoEstatistico;
 import domain.model.analise.Relatorio;
-
+import application.analise.RelatorioController;
+import domain.model.analise.FiltroRelatorio;
 
 public class TesteAnalise {
 
@@ -33,6 +34,19 @@ public class TesteAnalise {
                             resultado.obterPercentual() + "%)"
             );
         }
+        RelatorioController controller = new RelatorioController();
+
+        controller.calcularResultado(60, 100, "Candidato A");
+        controller.calcularResultado(30, 100, "Candidato B");
+        controller.calcularResultado(10, 100, "Candidato C");
+
+        FiltroRelatorio filtro = new FiltroRelatorio();
+        filtro.definirCandidato("Candidato A");
+
+        controller.aplicarFiltros(filtro);
+        controller.gerarRelatorio(1, "Teste com filtro");
+
+        System.out.println(controller.visualizarTabela());
 
         // Teste de geracao de relatorio e exportacao CSV
         Relatorio relatorio = new Relatorio(1, "Pesquisa Eleitoral");

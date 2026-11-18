@@ -52,4 +52,31 @@ public class FiltroRelatorio {
         pesquisa = null;
         candidato = null;
     }
+    public String getRegiao() {
+        return regiao;
+    }
+
+    public String getFaixaEtaria() {
+        return faixaEtaria;
+    }
+
+    public String getEscolaridade() {
+        return escolaridade;
+    }
+
+    public LocalDate getPeriodoInicial() {
+        return periodoInicial;
+    }
+
+    public LocalDate getPeriodoFinal() {
+        return periodoFinal;
+    }
+
+    public String getPesquisa() {
+        return pesquisa;
+    }
+
+    public String getCandidato() {
+        return candidato;
+    }
 }

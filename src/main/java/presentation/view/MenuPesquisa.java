@@ -15,7 +15,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class MenuPesquisa {
-
+    //TESTES NO TERMINAL!!
     private final PesquisaService service;
     private final Scanner in;
 

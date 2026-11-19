@@ -1,5 +1,6 @@
 package presentation.view;
 
+import application.pesquisa.AndamentoPesquisa;
 import domain.exceptions.PersistenciaException;
 import domain.exceptions.RegraDeNegocioException;
 import domain.model.pesquisa.Abrangencia;
@@ -15,10 +16,12 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -29,21 +32,19 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import presentation.controller.ConsultaPesquisaController;
+import presentation.controller.PesquisaFxController;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 public class TelaConsultaPesquisa {
 
     private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-    private final ConsultaPesquisaController controller;
-
+    private final PesquisaFxController controller;
     private final ObservableList<Pesquisa> dadosTabela = FXCollections.observableArrayList();
     private final TableView<Pesquisa> tabela = new TableView<>(dadosTabela);
-
     private final DatePicker dpInicio = new DatePicker();
     private final DatePicker dpFim = new DatePicker();
     private final TextField txtCargo = new TextField();
@@ -52,22 +53,24 @@ public class TelaConsultaPesquisa {
     private final ComboBox<Abrangencia> cbAbrangencia = new ComboBox<>();
     private final TextField txtQtdMinima = new TextField();
     private final Label lblResumo = new Label("0 pesquisa(s) exibida(s)");
+    private Stage stagePrincipal;
 
-    public TelaConsultaPesquisa(ConsultaPesquisaController controller) {
+    public TelaConsultaPesquisa(PesquisaFxController controller) {
         this.controller = controller;
     }
 
     public void exibir(Stage stage) {
-        stage.setTitle("Consulta de Pesquisas Eleitorais");
+        this.stagePrincipal = stage;
+        stage.setTitle("Módulo de Pesquisas Eleitorais");
 
         BorderPane raiz = new BorderPane();
         raiz.setPadding(new Insets(16));
 
         VBox topo = new VBox(12);
-        Label titulo = new Label("Consulta de Pesquisas");
+        Label titulo = new Label("Gerenciamento e Consulta de Pesquisas");
         titulo.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 
-        topo.getChildren().addAll(titulo, montarFiltros(), montarBarraAcoes());
+        topo.getChildren().addAll(titulo, montarFiltros(), montarBarraFiltros(), new Separator(), montarBarraCrud());
 
         configurarTabela();
 
@@ -82,7 +85,7 @@ public class TelaConsultaPesquisa {
 
         carregarTodas();
 
-        stage.setScene(new Scene(raiz, 1020, 620));
+        stage.setScene(new Scene(raiz, 1120, 680));
         stage.show();
     }
 
@@ -154,7 +157,7 @@ public class TelaConsultaPesquisa {
         return new VBox(4, lbl, controle);
     }
 
-    private HBox montarBarraAcoes() {
+    private HBox montarBarraFiltros() {
         Button btnLimpar = new Button("Limpar Filtros");
         btnLimpar.setOnAction(e -> limparFiltros());
 
@@ -165,6 +168,98 @@ public class TelaConsultaPesquisa {
         HBox box = new HBox(10, btnLimpar, btnPesquisar);
         box.setAlignment(Pos.CENTER_RIGHT);
         return box;
+    }
+
+    private HBox montarBarraCrud() {
+        Button btnNova = new Button("+ Nova Pesquisa");
+        btnNova.setOnAction(e -> new TelaFormPesquisa(controller, null, this::carregarTodas).exibir(stagePrincipal));
+
+        Button btnEditar = new Button("Editar");
+        btnEditar.setOnAction(e -> {
+            Pesquisa sel = exigirSelecionada();
+            if (sel != null) new TelaFormPesquisa(controller, sel, this::carregarTodas).exibir(stagePrincipal);
+        });
+
+        Button btnConfigurar = new Button("Configurar (Perguntas / Candidatos / Amostra)");
+        btnConfigurar.setOnAction(e -> {
+            Pesquisa sel = exigirSelecionada();
+            if (sel != null) new TelaConfiguracaoPesquisa(controller, sel.getCodigo(), this::carregarTodas).exibir(stagePrincipal);
+        });
+
+        Button btnIniciarColeta = new Button("Iniciar Coleta");
+        btnIniciarColeta.setOnAction(e -> executarAcaoCiclo("iniciar coleta", controller::iniciarColeta));
+
+        Button btnEncerrarColeta = new Button("Encerrar Coleta");
+        btnEncerrarColeta.setOnAction(e -> executarAcaoCiclo("encerrar coleta", controller::encerrarColeta));
+
+        Button btnProcessar = new Button("Processar");
+        btnProcessar.setOnAction(e -> executarAcaoCiclo("processar", controller::processar));
+
+        Button btnAndamento = new Button("Andamento");
+        btnAndamento.setOnAction(e -> {
+            Pesquisa sel = exigirSelecionada();
+            if (sel == null) return;
+            try {
+                AndamentoPesquisa a = controller.acompanhar(sel.getCodigo());
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Andamento — " + sel.getCodigo(),
+                        String.format("Pesquisa: %s%nPrevistas: %d%nRealizadas: %d%nConclusão: %.1f%%",
+                                sel.getNome(), a.quantidadePrevista(), a.quantidadeRealizada(), a.percentualConclusao()));
+            } catch (RegraDeNegocioException | PersistenciaException ex) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Erro", ex.getMessage());
+            }
+        });
+
+        Button btnExcluir = new Button("Excluir");
+        btnExcluir.setStyle("-fx-text-fill: #b91c1c;");
+        btnExcluir.setOnAction(e -> {
+            Pesquisa sel = exigirSelecionada();
+            if (sel == null) return;
+
+            Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmacao.setTitle("Confirmar Exclusão");
+            confirmacao.setHeaderText("Excluir pesquisa " + sel.getCodigo() + "?");
+            confirmacao.setContentText("Esta ação não poderá ser desfeita.");
+            Optional<ButtonType> resposta = confirmacao.showAndWait();
+
+            if (resposta.isPresent() && resposta.get() == ButtonType.OK) {
+                try {
+                    controller.excluir(sel.getCodigo());
+                    carregarTodas();
+                } catch (RegraDeNegocioException | PersistenciaException ex) {
+                    mostrarAlerta(Alert.AlertType.ERROR, "Não foi possível excluir", ex.getMessage());
+                }
+            }
+        });
+
+        HBox box = new HBox(8, btnNova, btnEditar, btnConfigurar,
+                new Separator(javafx.geometry.Orientation.VERTICAL),
+                btnIniciarColeta, btnEncerrarColeta, btnProcessar, btnAndamento,
+                new Separator(javafx.geometry.Orientation.VERTICAL),
+                btnExcluir);
+        box.setAlignment(Pos.CENTER_LEFT);
+        return box;
+    }
+
+    private void executarAcaoCiclo(String acao, java.util.function.Consumer<String> operacao) {
+        Pesquisa sel = exigirSelecionada();
+        if (sel == null) return;
+        try {
+            operacao.accept(sel.getCodigo());
+            carregarTodas();
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso",
+                    "Operação (" + acao + ") realizada para " + sel.getCodigo() + ".");
+        } catch (RegraDeNegocioException | PersistenciaException ex) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Erro ao " + acao, ex.getMessage());
+        }
+    }
+
+    private Pesquisa exigirSelecionada() {
+        Pesquisa sel = tabela.getSelectionModel().getSelectedItem();
+        if (sel == null) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Nenhuma pesquisa selecionada",
+                    "Selecione uma pesquisa na tabela primeiro.");
+        }
+        return sel;
     }
 
     @SuppressWarnings("unchecked")

@@ -6,7 +6,6 @@ import domain.model.pesquisa.Abrangencia;
 import domain.model.pesquisa.Pesquisa;
 import domain.model.pesquisa.SituacaoPesquisa;
 import domain.model.pesquisa.TipoPesquisa;
-
 import java.time.LocalDate;
 import java.util.List;
 

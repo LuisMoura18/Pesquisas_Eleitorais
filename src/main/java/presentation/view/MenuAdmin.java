@@ -9,7 +9,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class MenuAdmin {
-
+    //TESTES NO TERMINAL!!
     private final AdminService admin;
     private final Scanner in;
 

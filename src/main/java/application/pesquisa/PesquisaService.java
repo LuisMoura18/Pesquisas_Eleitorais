@@ -15,6 +15,7 @@ import application.admin.SessaoUsuario;
 import domain.exceptions.AcessoNegadoException;
 import domain.model.admin.PerfilAcesso;
 import domain.model.admin.Usuario;
+import domain.model.admin.StatusUsuario;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ public class PesquisaService {
     private void verificarPermissaoPesquisa() {
         Usuario logado = SessaoUsuario.getInstancia().getUsuarioLogado();
         if (logado == null
+                || logado.getStatus() != StatusUsuario.ATIVO
                 || !(logado.getPerfis().contains(PerfilAcesso.ADMINISTRADOR)
                 || logado.getPerfis().contains(PerfilAcesso.PESQUISADOR))) {
             throw new AcessoNegadoException("Funcionalidade restrita a Administradores e Pesquisadores.");
@@ -33,6 +35,7 @@ public class PesquisaService {
     private void verificarPermissaoProcessamento() {
         Usuario logado = SessaoUsuario.getInstancia().getUsuarioLogado();
         if (logado == null
+                || logado.getStatus() != StatusUsuario.ATIVO
                 || !(logado.getPerfis().contains(PerfilAcesso.ADMINISTRADOR)
                 || logado.getPerfis().contains(PerfilAcesso.ANALISTA))) {
             throw new AcessoNegadoException("Funcionalidade restrita a Administradores e Analistas.");

@@ -1,6 +1,11 @@
 
 package application.analise;
 
+import application.admin.SessaoUsuario;
+import domain.exceptions.AcessoNegadoException;
+import domain.model.admin.PerfilAcesso;
+import domain.model.admin.StatusUsuario;
+import domain.model.admin.Usuario;
 import domain.model.analise.AnaliseEstatistica;
 import domain.model.analise.FiltroRelatorio;
 import domain.model.analise.Relatorio;
@@ -18,6 +23,26 @@ public class RelatorioController {
     public RelatorioController() {
         this.analise = new AnaliseEstatistica();
         this.filtro = new FiltroRelatorio();
+    }
+
+    private void validarPermissao() {
+        Usuario logado = SessaoUsuario.getInstancia().getUsuarioLogado();
+
+        if (logado == null) {
+            throw new AcessoNegadoException("Acesso negado: nenhum usuário autenticado na sessão.");
+        }
+
+        if (logado.getStatus() != StatusUsuario.ATIVO) {
+            throw new AcessoNegadoException("Acesso negado: usuário inativo no sistema.");
+        }
+
+        boolean temPermissao = logado.getPerfis().contains(PerfilAcesso.ANALISTA)
+                || logado.getPerfis().contains(PerfilAcesso.PESQUISADOR)
+                || logado.getPerfis().contains(PerfilAcesso.ADMINISTRADOR);
+
+        if (!temPermissao) {
+            throw new AcessoNegadoException("Acesso negado: perfil sem permissão para análise e relatórios.");
+        }
     }
 
     public ResultadoEstatistico calcularResultado(

@@ -6,6 +6,8 @@ import domain.model.analise.ResultadoEstatistico;
 import domain.model.analise.Relatorio;
 import application.analise.RelatorioController;
 import domain.model.analise.FiltroRelatorio;
+import application.pesquisa.PesquisaService;
+import infrastructure.persistence.PesquisaRepositoryArquivo;
 
 public class TesteAnalise {
 
@@ -69,5 +71,32 @@ public class TesteAnalise {
         } catch (IllegalArgumentException e) {
             System.out.println("Teste de validacao: OK");
         }
+        // Teste de integracao com o modulo de Pesquisas
+        PesquisaRepositoryArquivo repositorio =
+                new PesquisaRepositoryArquivo("pesquisas_teste.dat");
+
+        PesquisaService pesquisaService = new PesquisaService(repositorio);
+
+        RelatorioController controllerIntegrado = new RelatorioController();
+        controllerIntegrado.conectarPesquisas(pesquisaService);
+
+        System.out.println("\nTESTE DE INTEGRACAO");
+        System.out.println("Pesquisas cadastradas: "
+                + controllerIntegrado.listarPesquisas().size());
+        System.out.println("Conexao com Pesquisas: OK");
+
+        pesquisaService.cadastrar(
+                "P001",
+                "Pesquisa Eleitoral Teste",
+                "Presidente",
+                java.time.LocalDate.of(2026, 11, 1),
+                java.time.LocalDate.of(2026, 11, 30),
+                domain.model.pesquisa.Abrangencia.NACIONAL,
+                domain.model.pesquisa.TipoPesquisa.INTENCAO,
+                100
+        );
+
+        System.out.println("Pesquisa encontrada: "
+                + controllerIntegrado.buscarPesquisa("P001").getNome());
     }
 }

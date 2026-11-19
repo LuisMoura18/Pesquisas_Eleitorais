@@ -10,6 +10,8 @@ import domain.model.analise.AnaliseEstatistica;
 import domain.model.analise.FiltroRelatorio;
 import domain.model.analise.Relatorio;
 import domain.model.analise.ResultadoEstatistico;
+import application.pesquisa.PesquisaService;
+import domain.model.pesquisa.Pesquisa;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,6 +22,7 @@ public class RelatorioController {
     private final AnaliseEstatistica analise;
     private FiltroRelatorio filtro;
     private Relatorio relatorio;
+    private PesquisaService pesquisaService;
 
     public RelatorioController() {
         this.analise = new AnaliseEstatistica();
@@ -93,5 +96,24 @@ public class RelatorioController {
                     "Nenhum relatorio foi gerado.");
         }
         relatorio.exportarCSV(caminho);
+    }
+    public void conectarPesquisas(PesquisaService pesquisaService) {
+        if (pesquisaService == null) {
+            throw new IllegalArgumentException("Servico de pesquisas invalido.");
+        }
+        this.pesquisaService = pesquisaService;
+    }
+    public List<Pesquisa> listarPesquisas() {
+        if (pesquisaService == null) {
+            throw new IllegalStateException("Modulo de pesquisas nao conectado.");
+        }
+        return pesquisaService.listar();
+    }
+
+    public Pesquisa buscarPesquisa(String codigo) {
+        if (pesquisaService == null) {
+            throw new IllegalStateException("Modulo de pesquisas nao conectado.");
+        }
+        return pesquisaService.buscar(codigo);
     }
 }

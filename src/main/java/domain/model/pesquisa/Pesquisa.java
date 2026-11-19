@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ public class Pesquisa implements Serializable {
     private int quantidadePrevista;
     private int quantidadeRealizada;
     private final List<Pergunta> perguntas = new ArrayList<>();
+    private final Map<String, String> candidatos = new LinkedHashMap<>(); // número -> nome
+    private final List<String> regioes = new ArrayList<>();
     private PlanoAmostral planoAmostral;
 
     public Pesquisa(String codigo, String nome, String cargo, LocalDate inicio,
@@ -43,7 +46,7 @@ public class Pesquisa implements Serializable {
         this.quantidadePrevista = quantidadePrevista;
     }
 
-    //Dados
+    //dados
     public void editar(String nome, String cargo, LocalDate inicio, LocalDate fim,
                        Abrangencia abrangencia, TipoPesquisa tipo, int quantidadePrevista) {
         exigirAlteravel();
@@ -72,7 +75,7 @@ public class Pesquisa implements Serializable {
         return situacao != SituacaoPesquisa.PROCESSADA && quantidadeRealizada == 0;
     }
 
-    //Perguntas
+    //perguntas
     public void adicionarPergunta(Pergunta pergunta) {
         exigirPlanejada("adicionar perguntas");
         for (Pergunta p : perguntas) {
@@ -109,6 +112,25 @@ public class Pesquisa implements Serializable {
                 .orElseThrow(() -> new PesquisaInvalidaException("Pergunta " + ordem + " não encontrada."));
     }
 
+    //Candidatos e regioes
+    public void associarCandidato(String numero, String nome) {
+        exigirPlanejada("associar candidatos");
+        if (numero == null || numero.isBlank() || nome == null || nome.isBlank())
+            throw new PesquisaInvalidaException("Número e nome do candidato são obrigatórios.");
+        if (candidatos.containsKey(numero))
+            throw new PesquisaInvalidaException("O candidato " + numero + " já está associado a esta pesquisa.");
+        candidatos.put(numero, nome);
+    }
+
+    public void associarRegiao(String regiao) {
+        exigirPlanejada("associar regiões");
+        if (regiao == null || regiao.isBlank())
+            throw new PesquisaInvalidaException("A região é obrigatória.");
+        if (regioes.contains(regiao))
+            throw new PesquisaInvalidaException("A região " + regiao + " já está associada a esta pesquisa.");
+        regioes.add(regiao);
+    }
+
     //Plano amostral
     public void definirPlanoAmostral(PlanoAmostral plano) {
         exigirPlanejada("definir o plano amostral");
@@ -120,6 +142,7 @@ public class Pesquisa implements Serializable {
         this.planoAmostral = plano;
     }
 
+    //entrevistas recebidas do módulo Coleta
     public List<GrupoAmostral> gruposQueNaoAtingiramMeta(Map<Long, Integer> entrevistasValidasPorGrupo) {
         List<GrupoAmostral> resultado = new ArrayList<>();
         if (planoAmostral == null) return resultado;
@@ -130,11 +153,11 @@ public class Pesquisa implements Serializable {
         return resultado;
     }
 
-    // ---------- Ciclo de vida ----------
-
+    //CICLOS
     public void iniciarColeta() {
         exigirSituacao(SituacaoPesquisa.PLANEJADA,
                 "Só é possível iniciar a coleta de uma pesquisa planejada.");
+        tipo.regra().validarInicioColeta(this);
         if (perguntas.isEmpty())
             throw new PesquisaInvalidaException("Cadastre ao menos uma pergunta antes de iniciar a coleta.");
         for (Pergunta p : perguntas) {
@@ -170,7 +193,8 @@ public class Pesquisa implements Serializable {
         return 100.0 * quantidadeRealizada / quantidadePrevista;
     }
 
-    //validacoes
+    //Validações internas
+
     private void validarDados(Abrangencia abrangencia, TipoPesquisa tipo,
                               LocalDate inicio, LocalDate fim, int quantidadePrevista) {
         if (inicio == null || fim == null || fim.isBefore(inicio))
@@ -210,5 +234,7 @@ public class Pesquisa implements Serializable {
     public int getQuantidadePrevista() { return quantidadePrevista; }
     public int getQuantidadeRealizada() { return quantidadeRealizada; }
     public List<Pergunta> getPerguntas() { return Collections.unmodifiableList(perguntas); }
+    public Map<String, String> getCandidatos() { return Collections.unmodifiableMap(candidatos); }
+    public List<String> getRegioes() { return Collections.unmodifiableList(regioes); }
     public PlanoAmostral getPlanoAmostral() { return planoAmostral; }
 }

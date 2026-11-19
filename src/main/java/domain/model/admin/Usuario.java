@@ -12,7 +12,7 @@ public class Usuario implements Serializable {
     private String nome;
     private String email;
     private String senha;
-    private Set<PerfilAcesso> perfis; // Um usuário pode ter um ou mais perfis
+    private Set<PerfilAcesso> perfis; //usuário pode ter um ou mais perfis
     private StatusUsuario status;
 
     public Usuario(String nome, String email, String senha, Set<PerfilAcesso> perfis) {
@@ -20,11 +20,11 @@ public class Usuario implements Serializable {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
-        this.perfis = perfis != null ? perfis : new HashSet<>();
+        this.perfis = perfis != null ? new HashSet<>(perfis) : new HashSet<>();
         this.status = StatusUsuario.ATIVO;
     }
 
-    // Getters e Setters
+    //Getters e Setters
     public UUID getId() { return id; }
     public String getNome() { return nome; }
     public String getEmail() { return email; }

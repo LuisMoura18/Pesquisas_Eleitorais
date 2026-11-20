@@ -16,6 +16,13 @@ import java.util.Set;
 public class PesquisaFxApp extends Application {
     private PesquisaService pesquisaService;
 
+    public PesquisaFxApp() {
+    }
+
+    public PesquisaFxApp(PesquisaService pesquisaService) {
+        this.pesquisaService = pesquisaService;
+    }
+
     @Override
     public void init() {
         //verifica se o usuário realmente é admin

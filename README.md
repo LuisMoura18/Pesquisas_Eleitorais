@@ -56,3 +56,9 @@ O módulo de Coleta e Amostra não foi concluído. A estrutura do sistema já es
 ---
 
 Projeto acadêmico — Ciência da Computação | Universidade de Brasília (UnB).
+
+## Contribuidores
+
+<a href="https://github.com/LuisMoura18"><img src="https://github.com/LuisMoura18.png?size=80" width="80" alt="Luís André"></a>
+<a href="https://github.com/Silverlux846"><img src="https://github.com/Silverlux846.png?size=80" width="80" alt="Faruq Kolapo"></a>
+<a href="https://github.com/Rafael-Joao"><img src="https://github.com/Rafael-Joao.png?size=80" width="80" alt="João Rafael"></a>

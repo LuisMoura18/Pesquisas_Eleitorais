@@ -39,7 +39,6 @@ public class PesquisaService {
         }
     }
     private final PesquisaRepository repositorio;
-
     public PesquisaService(PesquisaRepository repositorio) {
         this.repositorio = repositorio;
     }

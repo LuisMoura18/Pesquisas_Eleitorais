@@ -92,7 +92,7 @@ public class TesteAnalise {
                 java.time.LocalDate.of(2026, 11, 1),
                 java.time.LocalDate.of(2026, 11, 30),
                 domain.model.pesquisa.Abrangencia.NACIONAL,
-                domain.model.pesquisa.TipoPesquisa.INTENCAO,
+                domain.model.pesquisa.TipoPesquisa.INTENCAO_VOTO,
                 100
         );
 

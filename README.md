@@ -48,10 +48,11 @@ A distribuição das responsabilidades poderá ser ajustada conforme as necessid
 
 ## Status do desenvolvimento
 
-**Etapa atual:** Modelagem do sistema.
+**Etapa atual:** Entrega final.
 
-O projeto encontra-se em fase inicial de desenvolvimento, com foco na estruturação e documentação da solução. As funcionalidades serão implementadas gradualmente nas próximas entregas.
+O sistema encontra-se em fase final de desenvolvimento. Os módulos de Administração, Pesquisas e Análise Estatística e Relatórios foram implementados em Java, com interface gráfica em JavaFX e persistência dos dados por serialização de objetos.
 
+O módulo de Coleta e Amostra não foi concluído. A estrutura do sistema já está preparada para receber esse módulo em uma evolução futura.
 ---
 
 Projeto acadêmico — Ciência da Computação | Universidade de Brasília (UnB).

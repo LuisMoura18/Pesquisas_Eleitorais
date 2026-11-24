@@ -12,7 +12,7 @@ O sistema possui finalidade exclusivamente acadêmica e utiliza dados fictícios
 
 ## Modelagem do sistema
 
-Nesta etapa, o foco do projeto está na modelagem do sistema, na identificação das entidades e na definição de seus relacionamentos, servindo como base para o desenvolvimento das funcionalidades.
+Nesta etapa, o foco do projeto foi a modelagem do sistema, na identificação das entidades e na definição de seus relacionamentos, servindo como base para o desenvolvimento das funcionalidades.
 
 ### Diagrama de Classes
 
@@ -68,13 +68,13 @@ Na primeira execução, o sistema garante automaticamente a criação de um usu�
 
 ## Organização do projeto
 
-O sistema está planejado para ser dividido nos seguintes módulos:
+O sistema foi dividido nos seguintes módulos:
 
 - Administração
 - Pesquisas
 - Análise Estatística e Relatórios
 
-A implementação desses módulos será desenvolvida progressivamente ao longo das próximas etapas.
+A implementação desses módulos foi desenvolvida progressivamente ao longo das etapas.
 
 ## Equipe e responsabilidades
 
